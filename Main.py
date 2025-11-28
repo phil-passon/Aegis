@@ -113,11 +113,11 @@ async def help_slash(interaction: discord.Interaction):
                     inline=False)
 
     embed.add_field(name="💸| **Moderation** (Requires StaffPerms)",
-                    value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban``",
+                    value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear``",
                     inline=False)
 
     embed.add_field(name="⚡️| **Fun**",
-                    value="``/rps`` | ``/rr`` | ``/flip``",
+                    value="``/rps`` | ``/rr`` | ``/flip`` | **``/poll``** | **``/8ball``**",
                     inline=False)
 
     embed.add_field(name="🔗| ** Links**",
@@ -127,7 +127,6 @@ async def help_slash(interaction: discord.Interaction):
     embed.set_footer(text=f"Information requested by: {interaction.user.display_name}")
 
     await interaction.response.send_message(embed=embed)
-
 
 @client.tree.command(name="about", description="Shows information about the bot.")
 async def about_slash(interaction: discord.Interaction):
@@ -187,6 +186,68 @@ async def team_slash(interaction: discord.Interaction):
                     value="<@604615168047185926>")
 
     await interaction.response.send_message(embed=embed)
+
+
+@client.tree.command(name="poll",
+                     description="Creates a new poll. Separate options with commas (e.g., 'Option A, Option B').")
+@app_commands.describe(
+    question="The question for the poll.",
+    options_list="A comma-separated list of options (Min 2, Max 10). e.g., 'Blue, Red, Green'"
+)
+async def poll_slash(
+        interaction: discord.Interaction,
+        question: app_commands.Range[str, 1, 256],
+        options_list: app_commands.Range[str, 1, 1024]
+):
+    options = [opt.strip() for opt in options_list.split(',')]
+    options = [opt for opt in options if opt]
+
+    emoji_list = [
+        "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣",
+        "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"
+    ]
+
+    num_options = len(options)
+
+    if num_options < 2 or num_options > 10:
+        error_embed = discord.Embed(
+            colour=discord.Colour.red(),
+            title="__**Error**__",
+            description="A poll must have between **2 and 10** options."
+        )
+        await interaction.response.send_message(embed=error_embed, ephemeral=True)
+        return
+
+    poll_content = ""
+    for i, option in enumerate(options):
+        poll_content += f"{emoji_list[i]} **{option}**\n"
+
+    embed = discord.Embed(
+        colour=embed_color,
+        title=f"🗳️ | **{question}**",
+        description=poll_content
+    )
+    embed.set_footer(text=f"Poll created by: {interaction.user.display_name}",
+                     icon_url=interaction.user.display_avatar.url)
+
+
+    await interaction.response.defer(thinking=True, ephemeral=True)
+
+    poll_message = await interaction.channel.send(embed=embed)
+
+    for i in range(num_options):
+        await poll_message.add_reaction(emoji_list[i])
+
+    confirmation_text = "✅ Poll successfully created! This message will disappear in 3 seconds."
+    await interaction.followup.send(confirmation_text, ephemeral=True)
+
+    await asyncio.sleep(3)
+
+    try:
+        await interaction.delete_original_response()
+    except discord.errors.NotFound:
+        pass
+
 
 
 # --- Moderation Commands ---
@@ -429,6 +490,51 @@ async def flip_slash(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=embed)
 
+
+@client.tree.command(name="8ball", description="Ask the Magic 8-Ball a question.")
+@app_commands.describe(question="The question you want the 8-Ball to answer.")
+async def eightball_slash(interaction: discord.Interaction, question: str):
+    # Define possible 8-Ball answers
+    responses = [
+        # Positive Responses
+        "It is certain.",
+        "It is decidedly so.",
+        "Without a doubt.",
+        "Yes - definitely.",
+        "You may rely on it.",
+        "As I see it, yes.",
+        "Most likely.",
+        "Outlook good.",
+        "Yes.",
+        "Signs point to yes.",
+
+        # Non-committal Responses
+        "Reply hazy, try again.",
+        "Ask again later.",
+        "Better not tell you now.",
+        "Cannot predict now.",
+        "Concentrate and ask again.",
+
+        # Negative Responses
+        "Don't count on it.",
+        "My reply is no.",
+        "My sources say no.",
+        "Outlook not so good.",
+        "Very doubtful."
+    ]
+
+    # Select a random response
+    answer = random.choice(responses)
+
+    # Create the embed
+    embed = discord.Embed(
+        colour=embed_color,
+        title="🎱 Magic 8-Ball",
+        description=f"**Question:** {question}\n\n**Answer:** {answer}"
+    )
+    embed.set_footer(text=f"Asked by: {interaction.user.display_name}")
+
+    await interaction.response.send_message(embed=embed)
 
 # -----------------------------------Run Bot--------------------------------------#
 BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
