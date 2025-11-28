@@ -1,8 +1,8 @@
 # -----------------------------------Setup--------------------------------------#
 import os
-from dotenv import load_dotenv # NEW: Import load_dotenv
+from dotenv import load_dotenv
 
-load_dotenv() # NEW: Load variables from the .env file immediately
+load_dotenv()
 import discord
 import asyncio
 from discord.ext import commands
@@ -308,6 +308,58 @@ async def unban_slash(interaction: discord.Interaction, user_id: str, reason: st
             description="An unexpected error occurred during the unban process."
         )
         await interaction.response.send_message(embed=error_embed, ephemeral=True)
+
+
+@client.tree.command(name="clear", description="Bulk deletes messages in the current channel.")
+@is_staff_perms()
+@app_commands.default_permissions(manage_messages=True)
+@app_commands.describe(amount="The number of messages to delete (1-100).")
+async def clear_slash(interaction: discord.Interaction, amount: app_commands.Range[int, 1, 100]):
+    # Check if the BOT has the permission to delete messages
+    bot_has_permissions = interaction.channel.permissions_for(interaction.guild.me).manage_messages
+
+    if not bot_has_permissions:
+        error_embed = discord.Embed(
+            colour=discord.Colour.red(),
+            title="__**Error**__",
+            description="I need the **'Manage Messages'** permission in this channel to run this command."
+        )
+        await interaction.response.send_message(embed=error_embed, ephemeral=True)
+        return
+
+    try:
+        # CRITICAL FIX: Defer the interaction immediately to prevent the 3-second timeout
+        await interaction.response.defer(ephemeral=True)
+
+        # Deletes the messages
+        deleted = await interaction.channel.purge(limit=amount)
+
+        # Send confirmation message using FOLLOWUP (since we deferred the response)
+        embed = discord.Embed(
+            colour=discord.Colour.green(),
+            description=f"✅ Successfully deleted **{len(deleted)}** messages."
+        )
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
+    except discord.Forbidden:
+        # A permission error occurred during the purge operation
+        error_embed = discord.Embed(
+            colour=discord.Colour.red(),
+            title="__**Error**__",
+            description="A permission error occurred while attempting to delete messages. Please ensure I have the 'Manage Messages' permission."
+        )
+        # Send error via followup
+        await interaction.followup.send(embed=error_embed, ephemeral=True)
+
+    except Exception as e:
+        print(f"Clear error: {e}")
+        error_embed = discord.Embed(
+            colour=discord.Colour.red(),
+            title="__**Error**__",
+            description=f"An unexpected error occurred during the clear process: {e}"
+        )
+        # Send error via followup
+        await interaction.followup.send(embed=error_embed, ephemeral=True)
 
 
 # --- Fun Commands ---
