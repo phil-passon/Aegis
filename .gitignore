@@ -1,0 +1,26 @@
+# ------------------------------------
+# Security & Configuration
+# ------------------------------------
+# Crucial: Hides your bot token and configuration file
+.env
+# ------------------------------------
+# Python Virtual Environment
+# ------------------------------------
+.venv/
+env/
+# ------------------------------------
+# Python and Compiled Files
+# ------------------------------------
+# Compiled Python files
+__pycache__/
+*.pyc
+# ------------------------------------
+# macOS and IDE/Editor Files (Common)
+# ------------------------------------
+# macOS specific files
+.DS_Store
+
+# IDE and Editor Configuration files
+.idea/
+.vscode/
+*.iml
