@@ -124,7 +124,8 @@ async def help_slash(interaction: discord.Interaction):
                     value=f"[❤️|**Invite**]({bot_invite})",
                     inline=False)
     embed.set_author(name=name, url=bot_invite, icon_url=icon_url)
-    embed.set_footer(text=f"Information requested by: {interaction.user.display_name}")
+    embed.set_footer(text=f"Requested by {interaction.user.name}",
+                     icon_url=interaction.user.display_avatar.url)
 
     await interaction.response.send_message(embed=embed)
 
@@ -532,7 +533,8 @@ async def eightball_slash(interaction: discord.Interaction, question: str):
         title="🎱 Magic 8-Ball",
         description=f"**Question:** {question}\n\n**Answer:** {answer}"
     )
-    embed.set_footer(text=f"Asked by: {interaction.user.display_name}")
+    embed.set_footer(text=f"Requested by {interaction.user.name}",
+                     icon_url=interaction.user.display_avatar.url)
 
     await interaction.response.send_message(embed=embed)
 
