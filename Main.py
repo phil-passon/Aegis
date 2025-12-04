@@ -25,7 +25,7 @@ STAFF_ROLE_NAME = 'StaffPerms'
 
 # -----------------------------------Client Setup--------------------------------------#
 
-client = commands.Bot(command_prefix=None,
+client = commands.Bot(command_prefix=[],
                       help_command=None,
                       case_insensitive=True,
                       intents=intents)
