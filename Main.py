@@ -19,6 +19,7 @@ intents.members = True
 name = 'Aegis'
 bot_invite = "https://discord.com/oauth2/authorize?client_id=1443892177951526972&permissions=8&integration_type=0&scope=applications.commands+bot"
 icon_url = "https://iili.io/fChSV49.png"
+source_code = "https://github.com/phil-passon/Aegis"
 embed_color = discord.Color.from_rgb(219, 196, 164)
 STAFF_ROLE_NAME = 'StaffPerms'
 
@@ -75,7 +76,7 @@ async def on_guild_join(guild):
                             "to all staff members to grant them access to moderation commands."
             )
             embed.add_field(name="🔗| ** Links**",
-                            value=f"[❤️|**Invite**]({bot_invite})",
+                            value=f"❤️|[**Invite**]({bot_invite}) | 👨‍💻️|[**Source Code**]({source_code})",
                             inline=False)
             await channel.send(embed=embed)
             break
@@ -107,7 +108,7 @@ def is_staff_perms():
 async def help_slash(interaction: discord.Interaction):
     embed = discord.Embed(colour=embed_color,
                           title="Aegis Bot Commands",
-                          description="Use `/` to see all commands!")
+                          description="A List of all the commands")
     embed.add_field(name="📑| **Info**",
                     value="``/help`` | ``/team`` | ``/about`` |  ``/whois`` |  ``/avatar`` | ``/serverinfo``",
                     inline=False)
@@ -117,11 +118,11 @@ async def help_slash(interaction: discord.Interaction):
                     inline=False)
 
     embed.add_field(name="⚡️| **Fun**",
-                    value="``/rps`` | ``/rr`` | ``/flip`` | **``/poll``** | **``/8ball``**",
+                    value="``/rps`` | ``/rr`` | ``/flip`` | ``/poll`` | ``/8ball``",
                     inline=False)
 
     embed.add_field(name="🔗| ** Links**",
-                    value=f"[❤️|**Invite**]({bot_invite})",
+                    value=f"❤️| [**Invite**]({bot_invite}) | 👨‍💻️| [**Source Code**]({source_code})",
                     inline=False)
     embed.set_author(name=name, url=bot_invite, icon_url=icon_url)
     embed.set_footer(text=f"Requested by {interaction.user.name}",
