@@ -130,8 +130,8 @@ async def help_slash(interaction: discord.Interaction):
 
     await interaction.response.send_message(embed=embed)
 
-    @client.tree.command(name="serverinfo", description="Shows detailed information about the server.")
-    async def serverinfo_slash(interaction: discord.Interaction):
+@client.tree.command(name="serverinfo", description="Shows detailed information about the server.")
+async def serverinfo_slash(interaction: discord.Interaction):
         guild = interaction.guild
 
         # Calculate approximate time since creation
@@ -473,8 +473,16 @@ async def clear_slash(interaction: discord.Interaction, amount: app_commands.Ran
         # Send error via followup
         await interaction.followup.send(embed=error_embed, ephemeral=True)
 
+@client.tree.command(name="slowmode", description="Sets or removes slowmode in the current channel.")
+@is_staff_perms()
+@app_commands.default_permissions(manage_channels=True)
+@app_commands.describe(
+    seconds="The slowmode delay in seconds (0 to disable, max 21600 seconds/6 hours).",
+    reason="The reason for setting slowmode."
+)
 async def slowmode_slash(interaction: discord.Interaction, seconds: app_commands.Range[int, 0, 21600],
                          reason: str = None):
+    # Check if the BOT has permissions to manage channels (necessary for slowmode)
     if not interaction.channel.permissions_for(interaction.guild.me).manage_channels:
         error_embed = discord.Embed(
             colour=discord.Colour.red(),
@@ -518,7 +526,6 @@ async def slowmode_slash(interaction: discord.Interaction, seconds: app_commands
             description="An unexpected error occurred during the slowmode process."
         )
         await interaction.response.send_message(embed=error_embed, ephemeral=True)
-
 
 # --- Fun Commands ---
 
