@@ -49,7 +49,7 @@ async def setup_hook():
 async def status_task():
     statuses = [
         discord.Game("Use /help for help"),
-        discord.Game("Version 1.0.0")
+        discord.Game("Version 1.0.1")
     ]
     while True:
         for status in statuses:
@@ -109,11 +109,11 @@ async def help_slash(interaction: discord.Interaction):
                           title="Aegis Bot Commands",
                           description="Use `/` to see all commands!")
     embed.add_field(name="📑| **Info**",
-                    value="``/help`` | ``/team`` | ``/about`` |  ``/whois`` |  ``/avatar``",
+                    value="``/help`` | ``/team`` | ``/about`` |  ``/whois`` |  ``/avatar`` | ``/serverinfo``",
                     inline=False)
 
     embed.add_field(name="💸| **Moderation** (Requires StaffPerms)",
-                    value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear``",
+                    value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode``",
                     inline=False)
 
     embed.add_field(name="⚡️| **Fun**",
@@ -128,6 +128,55 @@ async def help_slash(interaction: discord.Interaction):
                      icon_url=interaction.user.display_avatar.url)
 
     await interaction.response.send_message(embed=embed)
+
+    @client.tree.command(name="serverinfo", description="Shows detailed information about the server.")
+    async def serverinfo_slash(interaction: discord.Interaction):
+        guild = interaction.guild
+
+        # Calculate approximate time since creation
+        time_since_creation = discord.utils.format_dt(guild.created_at, "R")
+
+        # Count members (bots and humans)
+        member_count = len([m for m in guild.members if not m.bot])
+        bot_count = len([m for m in guild.members if m.bot])
+
+        # Count channels
+        text_channels = len(guild.text_channels)
+        voice_channels = len(guild.voice_channels)
+
+        # Get boost info
+        boost_level = guild.premium_tier
+        boost_count = guild.premium_subscription_count
+
+        embed = discord.Embed(
+            title=f"🏛️ | Server Info: {guild.name}",
+            colour=embed_color
+        )
+
+        # Basic Information
+        embed.add_field(name="Owner", value=guild.owner.mention, inline=True)
+        embed.add_field(name="Server ID", value=f"`{guild.id}`", inline=True)
+        embed.add_field(name="Created", value=f"<t:{int(guild.created_at.timestamp())}:F> ({time_since_creation})",
+                        inline=True)
+
+        # Member and Channel Counts
+        embed.add_field(name="Members", value=f"👥 {member_count} humans\n🤖 {bot_count} bots", inline=True)
+        embed.add_field(name="Channels", value=f"💬 {text_channels} text\n🔊 {voice_channels} voice", inline=True)
+        embed.add_field(name="Roles", value=f"🎗️ {len(guild.roles)} roles", inline=True)
+
+        # Boost/Verification/Features
+        embed.add_field(name="Boost Level", value=f"Tier {boost_level} ({boost_count} boosts)", inline=True)
+        embed.add_field(name="Verification Level", value=str(guild.verification_level).capitalize().replace('_', ' '),
+                        inline=True)
+
+        if guild.icon:
+            embed.set_thumbnail(url=guild.icon.url)
+            embed.set_author(name=guild.name, icon_url=guild.icon.url)
+
+        embed.set_footer(text=f"Requested by {interaction.user.name}",
+                         icon_url=interaction.user.display_avatar.url)
+
+        await interaction.response.send_message(embed=embed)
 
 @client.tree.command(name="about", description="Shows information about the bot.")
 async def about_slash(interaction: discord.Interaction):
@@ -422,6 +471,52 @@ async def clear_slash(interaction: discord.Interaction, amount: app_commands.Ran
         )
         # Send error via followup
         await interaction.followup.send(embed=error_embed, ephemeral=True)
+
+async def slowmode_slash(interaction: discord.Interaction, seconds: app_commands.Range[int, 0, 21600],
+                         reason: str = None):
+    if not interaction.channel.permissions_for(interaction.guild.me).manage_channels:
+        error_embed = discord.Embed(
+            colour=discord.Colour.red(),
+            title="__**Error**__",
+            description="I need the **'Manage Channels'** permission in this channel to set slowmode."
+        )
+        await interaction.response.send_message(embed=error_embed, ephemeral=True)
+        return
+
+    try:
+        await interaction.channel.edit(slowmode_delay=seconds, reason=reason)
+
+        if seconds == 0:
+            title = "__**Slowmode Disabled**__"
+            desc = f"✅ Slowmode has been disabled in {interaction.channel.mention}."
+            color = discord.Color.orange()
+        else:
+            title = "__**Slowmode Applied**__"
+            desc = f"✅ Slowmode set to **{seconds} seconds** in {interaction.channel.mention}."
+            color = discord.Color.green()
+
+        embed = discord.Embed(
+            colour=color,
+            title=title,
+            description=f"{desc}\r\n**Reason:** {reason or 'No reason provided'}"
+        )
+        await interaction.response.send_message(embed=embed)
+
+    except discord.Forbidden:
+        error_embed = discord.Embed(
+            colour=discord.Colour.red(),
+            title="__**Permissions Error**__",
+            description="I do not have the necessary permissions (`Manage Channels`) to edit channel settings."
+        )
+        await interaction.response.send_message(embed=error_embed, ephemeral=True)
+    except Exception as e:
+        print(f"Slowmode error: {e}")
+        error_embed = discord.Embed(
+            colour=discord.Colour.red(),
+            title="__**Unexpected Error**__",
+            description="An unexpected error occurred during the slowmode process."
+        )
+        await interaction.response.send_message(embed=error_embed, ephemeral=True)
 
 
 # --- Fun Commands ---
