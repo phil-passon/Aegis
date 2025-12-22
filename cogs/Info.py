@@ -29,7 +29,7 @@ class Info(commands.Cog):
                         inline=False)
 
         embed.add_field(name="💸| **Moderation** (Requires StaffPerms)",
-                        value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode`` | ``/lockdown`` | ``/unlock``",
+                        value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode`` | ``/lockdown`` | ``/unlock`` | ``/nuke``",
                         inline=False)
 
         embed.add_field(name="⚡️| **Fun**",

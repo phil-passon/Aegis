@@ -147,6 +147,26 @@ class Moderation(commands.Cog):
         embed = discord.Embed(title="🔓 Channel Unlocked", description="Lockdown lifted.", colour=discord.Color.green())
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(name="nuke", description="Deletes all messages in the channel by recreating it.")
+    @is_staff_perms()
+    @app_commands.default_permissions(manage_channels=True)
+    async def nuke(self, interaction: discord.Interaction):
+        channel = interaction.channel
+        channel_position = channel.position
+
+        new_channel = await channel.clone(reason=f"Nuke by {interaction.user}")
+
+        await new_channel.edit(position=channel_position)
+
+        await channel.delete()
+
+        embed = discord.Embed(
+            title="☢️ Channel Nuked",
+            description=f"This channel was cleared by {interaction.user.mention}.",
+            colour=discord.Color.red()
+        )
+        await new_channel.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(Moderation(bot))
