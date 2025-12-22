@@ -114,7 +114,7 @@ async def help_slash(interaction: discord.Interaction):
                     inline=False)
 
     embed.add_field(name="💸| **Moderation** (Requires StaffPerms)",
-                    value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode``",
+                    value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode`` | ``/lockdown`` | ``/unlock``",
                     inline=False)
 
     embed.add_field(name="⚡️| **Fun**",
@@ -526,6 +526,65 @@ async def slowmode_slash(interaction: discord.Interaction, seconds: app_commands
             description="An unexpected error occurred during the slowmode process."
         )
         await interaction.response.send_message(embed=error_embed, ephemeral=True)
+
+# -----------------------------------Lockdown Commands--------------------------------------#
+
+@client.tree.command(name="lockdown", description="Prevents @everyone from sending messages in this channel.")
+@is_staff_perms()
+@app_commands.default_permissions(manage_channels=True)
+@app_commands.describe(reason="Why is this channel being locked?")
+async def lockdown(interaction: discord.Interaction, reason: str = "No reason provided"):
+    channel = interaction.channel
+    overwrite = channel.overwrites_for(interaction.guild.default_role)
+
+    # If they already can't send messages, no need to lock
+    if overwrite.send_messages is False:
+        embed = discord.Embed(
+            colour=discord.Colour.orange(),
+            description="⚠️ This channel is already under lockdown."
+        )
+        return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    overwrite.send_messages = False
+    try:
+        await channel.set_permissions(interaction.guild.default_role, overwrite=overwrite,
+                                      reason=f"Lockdown by {interaction.user}")
+
+        embed = discord.Embed(
+            title="🛡️ Channel Locked",
+            description=f"This channel is now under lockdown.\n**Reason:** {reason}",
+            colour=discord.Colour.red()
+        )
+        embed.set_footer(text=f"Action by {interaction.user.name}")
+        await interaction.response.send_message(embed=embed)
+
+    except discord.Forbidden:
+        await interaction.response.send_message("I don't have permission to manage permissions here.", ephemeral=True)
+
+
+@client.tree.command(name="unlock", description="Restores the ability for @everyone to send messages.")
+@is_staff_perms()
+@app_commands.default_permissions(manage_channels=True)
+async def unlock(interaction: discord.Interaction):
+    channel = interaction.channel
+    overwrite = channel.overwrites_for(interaction.guild.default_role)
+
+    # Reset the permission (None makes it inherit from the Category or Role defaults)
+    overwrite.send_messages = None
+
+    try:
+        await channel.set_permissions(interaction.guild.default_role, overwrite=overwrite,
+                                      reason=f"Unlock by {interaction.user}")
+
+        embed = discord.Embed(
+            title="🔓 Channel Unlocked",
+            description="The lockdown has been lifted. You may speak again.",
+            colour=discord.Color.green()
+        )
+        await interaction.response.send_message(embed=embed)
+
+    except discord.Forbidden:
+        await interaction.response.send_message("I don't have permission to manage permissions here.", ephemeral=True)
 
 # --- Fun Commands ---
 
