@@ -59,7 +59,7 @@ async def on_ready():
 
 
 async def status_task():
-    statuses = [discord.Game("Use /help for commands"), discord.Game("Version 1.1.0")]
+    statuses = [discord.Game("Use /help for commands"), discord.Game("Version 1.1.1")]
     while True:
         for status in statuses:
             await bot.change_presence(activity=status)
