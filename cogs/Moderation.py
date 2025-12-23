@@ -1,8 +1,66 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
+from discord import app_commands, ui
 
 from Main import NAME, BOT_INVITE, ICON_URL, EMBED_COLOUR, SOURCE_CODE, STAFF_ROLE_NAME
+
+
+class EmbedModal(ui.Modal, title="Create Custom Embed"):
+    embed_title = ui.TextInput(
+        label="Embed Title",
+        placeholder="Enter your title here...",
+        required=False,
+        max_length=256
+    )
+
+    message = ui.TextInput(
+        label="Main Content",
+        style=discord.TextStyle.paragraph,
+        placeholder="Line 1\nLine 2\n- Bullet point 1",
+        required=True,
+        max_length=4000
+    )
+
+    author_icon = ui.TextInput(
+        label="Author Icon URL (Top Left Circle)",
+        placeholder="https://example.com/icon.png",
+        required=False
+    )
+
+    thumbnail_url = ui.TextInput(
+        label="Thumbnail URL (Small top-right icon)",
+        placeholder="https://example.com/image.png",
+        required=False
+    )
+
+    image_url = ui.TextInput(
+        label="Main Image URL (Large bottom image)",
+        placeholder="https://example.com/image.png",
+        required=False
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        from Main import EMBED_COLOUR, BOT_INVITE, ICON_URL
+
+        embed = discord.Embed(
+            title=self.embed_title.value,
+            description=self.message.value,
+            colour=EMBED_COLOUR
+        )
+
+        if self.author_icon.value:
+            embed.set_author(name=interaction.user.display_name, icon_url=self.author_icon.value)
+
+        if self.thumbnail_url.value:
+            embed.set_thumbnail(url=self.thumbnail_url.value)
+
+        if self.image_url.value:
+            embed.set_image(url=self.image_url.value)
+
+        embed.set_footer(text=f"Sent by {interaction.user.name}", icon_url=interaction.user.display_avatar.url)
+
+        await interaction.response.send_message("✅ Embed posted!", ephemeral=True)
+        await interaction.channel.send(embed=embed)
 
 
 class Moderation(commands.Cog):
@@ -29,14 +87,10 @@ class Moderation(commands.Cog):
 
     # -----------------------------------Moderation Commands--------------------------------------#
 
-    @app_commands.command(name="embed", description="Generates a simple embed from your text.")
+    @app_commands.command(name="embed", description="Opens a form to create a structured embed.")
     @is_staff_perms()
-    @app_commands.describe(message="The text content for the embed description.")
-    async def embed_slash(self, interaction: discord.Interaction, message: str):
-        await interaction.response.send_message("Sending embed...", ephemeral=True, delete_after=3)
-        embed = discord.Embed(colour=EMBED_COLOUR, description=message)
-        embed.add_field(name="\u200b", value=f"[Invite]({BOT_INVITE})")
-        await interaction.channel.send(embed=embed)
+    async def embed_slash(self, interaction: discord.Interaction):
+        await interaction.response.send_modal(EmbedModal())
 
     @app_commands.command(name="kick", description="Kicks a member from the server.")
     @is_staff_perms()

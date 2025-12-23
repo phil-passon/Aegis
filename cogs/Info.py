@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
+from discord import app_commands, ui
 
 from Main import NAME, BOT_INVITE, ICON_URL, EMBED_COLOUR, SOURCE_CODE, STAFF_ROLE_NAME
 
@@ -32,22 +32,20 @@ class Info(commands.Cog):
                         value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode`` | ``/lockdown`` | ``/unlock`` | ``/nuke``",
                         inline=False)
 
-        embed.add_field(name="👨‍💻| **Support**",
-                        value="``/ticket`` | ``/close``",
-                        inline=False)
-
         embed.add_field(name="⚡️| **Fun**",
                         value="``/rps`` | ``/rr`` | ``/flip`` | ``/poll`` | ``/8ball``",
                         inline=False)
 
-        embed.add_field(name="🔗| ** Links**",
-                        value=f"❤️| [**Invite**]({BOT_INVITE}) | 👨‍💻️| [**Source Code**]({SOURCE_CODE})",
-                        inline=False)
         embed.set_author(name=NAME, url=BOT_INVITE, icon_url=ICON_URL)
         embed.set_footer(text=f"Requested by {interaction.user.name}",
                          icon_url=interaction.user.display_avatar.url)
 
-        await interaction.response.send_message(embed=embed)
+        view = ui.View()
+        view.add_item(ui.Button(label="❤️ | Invite Aegis", url=BOT_INVITE, style=discord.ButtonStyle.link))
+        view.add_item(ui.Button(label="👨‍💻 | Source Code", url=SOURCE_CODE, style=discord.ButtonStyle.link))
+
+
+        await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.command(name="serverinfo", description="Shows detailed information about the server.")
     async def serverinfo_slash(self, self_interaction: discord.Interaction):
@@ -66,16 +64,16 @@ class Info(commands.Cog):
             colour=EMBED_COLOUR
         )
 
-        embed.add_field(name="Owner", value=guild.owner.mention, inline=False)
-        embed.add_field(name="Server ID", value=f"`{guild.id}`", inline=False)
+        embed.add_field(name="Owner", value=guild.owner.mention, inline=True)
+        embed.add_field(name="Server ID", value=f"`{guild.id}`", inline=True)
         embed.add_field(name="Created", value=f"<t:{int(guild.created_at.timestamp())}:F> ({time_since_creation})",
-                        inline=False)
-        embed.add_field(name="Members", value=f"👥 {member_count} humans\n🤖 {bot_count} bots", inline=False)
-        embed.add_field(name="Channels", value=f"💬 {text_channels} text\n🔊 {voice_channels} voice", inline=False)
-        embed.add_field(name="Roles", value=f"🎗️ {len(guild.roles)} roles", inline=False)
-        embed.add_field(name="Boost Level", value=f"Tier {boost_level} ({boost_count} boosts)", inline=False)
+                        inline=True)
+        embed.add_field(name="Members", value=f"👥 {member_count} humans\n🤖 {bot_count} bots", inline=True)
+        embed.add_field(name="Channels", value=f"💬 {text_channels} text\n🔊 {voice_channels} voice", inline=True)
+        embed.add_field(name="Roles", value=f"🎗️ {len(guild.roles)} roles", inline=True)
+        embed.add_field(name="Boost Level", value=f"Tier {boost_level} ({boost_count} boosts)", inline=True)
         embed.add_field(name="Verification Level", value=str(guild.verification_level).capitalize().replace('_', ' '),
-                        inline=False)
+                        inline=True)
 
         if guild.icon:
             embed.set_thumbnail(url=guild.icon.url)
@@ -143,5 +141,7 @@ class Info(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
+async def setup(bot):
+    await bot.add_cog(Info(bot))
 async def setup(bot):
     await bot.add_cog(Info(bot))
