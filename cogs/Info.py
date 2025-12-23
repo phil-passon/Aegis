@@ -32,6 +32,10 @@ class Info(commands.Cog):
                         value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode`` | ``/lockdown`` | ``/unlock`` | ``/nuke``",
                         inline=False)
 
+        embed.add_field(name="👨‍💻| **Support**",
+                        value="``/ticket`` | ``/close``",
+                        inline=False)
+
         embed.add_field(name="⚡️| **Fun**",
                         value="``/rps`` | ``/rr`` | ``/flip`` | ``/poll`` | ``/8ball``",
                         inline=False)
@@ -62,16 +66,16 @@ class Info(commands.Cog):
             colour=EMBED_COLOUR
         )
 
-        embed.add_field(name="Owner", value=guild.owner.mention, inline=True)
-        embed.add_field(name="Server ID", value=f"`{guild.id}`", inline=True)
+        embed.add_field(name="Owner", value=guild.owner.mention, inline=False)
+        embed.add_field(name="Server ID", value=f"`{guild.id}`", inline=False)
         embed.add_field(name="Created", value=f"<t:{int(guild.created_at.timestamp())}:F> ({time_since_creation})",
-                        inline=True)
-        embed.add_field(name="Members", value=f"👥 {member_count} humans\n🤖 {bot_count} bots", inline=True)
-        embed.add_field(name="Channels", value=f"💬 {text_channels} text\n🔊 {voice_channels} voice", inline=True)
-        embed.add_field(name="Roles", value=f"🎗️ {len(guild.roles)} roles", inline=True)
-        embed.add_field(name="Boost Level", value=f"Tier {boost_level} ({boost_count} boosts)", inline=True)
+                        inline=False)
+        embed.add_field(name="Members", value=f"👥 {member_count} humans\n🤖 {bot_count} bots", inline=False)
+        embed.add_field(name="Channels", value=f"💬 {text_channels} text\n🔊 {voice_channels} voice", inline=False)
+        embed.add_field(name="Roles", value=f"🎗️ {len(guild.roles)} roles", inline=False)
+        embed.add_field(name="Boost Level", value=f"Tier {boost_level} ({boost_count} boosts)", inline=False)
         embed.add_field(name="Verification Level", value=str(guild.verification_level).capitalize().replace('_', ' '),
-                        inline=True)
+                        inline=False)
 
         if guild.icon:
             embed.set_thumbnail(url=guild.icon.url)
