@@ -14,7 +14,8 @@ Take full control of your server security with tools designed for efficiency and
 Provide high-quality support with a dedicated ticket environment.
 * **Automated Setup:** Automatically creates a "Tickets" category and private channels.
 * **Privacy Focused:** Only the user and the staff team can view the created ticket.
-* **One-Command Closure:** Use `/close` to securely delete the ticket channel once the query is resolved.
+* **Anti Spam:** Users can only create one ticket at a time.
+* **One-Command Closure:** Use `/close` or press the Close Ticket button to securely delete the ticket channel once the query is resolved.
 ### 🎨 Advanced Embed Creator
 Stop sending plain text. Aegis includes a built-in **Embed Modal** for staff.
 * **Interactive Form:** Input titles, descriptions, and image URLs via a native Discord popup.
