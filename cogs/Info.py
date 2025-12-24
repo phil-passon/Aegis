@@ -33,7 +33,11 @@ class Info(commands.Cog):
                         inline=False)
 
         embed.add_field(name="⚡️| **Fun**",
-                        value="``/rps`` | ``/rr`` | ``/flip`` | ``/poll`` | ``/8ball``",
+                        value="``/rps`` | ``/rr`` | ``/flip`` | ``/poll`` | ``/8ball`` | ``/whoisghosthunter``",
+                        inline=False)
+
+        embed.add_field(name="🤫| **Secret**",
+                        value="``Haunted Messages`` | ``Judgy Reactions``",
                         inline=False)
 
         embed.set_author(name=NAME, url=BOT_INVITE, icon_url=ICON_URL)

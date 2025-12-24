@@ -131,8 +131,59 @@ class Fun(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(name="exorcist", description="See who currently holds the 👻|Exorcist role.")
+    async def current_exorcist(self, interaction: discord.Interaction):
+        role = discord.utils.get(interaction.guild.roles, name="👻|Exorcist")
+
+        if not role or not role.members:
+            return await interaction.response.send_message(
+                "👻 No one currently holds the Exorcist role. The ghosts are winning...", ephemeral=True)
+
+        current_holder = role.members[0]
+
+        embed = discord.Embed(
+            title="✨ Current Ghost Hunter",
+            description=f"The ghost is currently being held at bay by {current_holder.mention}!",
+            colour=discord.Colour.purple()
+        )
+        embed.set_thumbnail(url=current_holder.display_avatar.url)
+        embed.set_footer(text="Watch the chat for ghosts to steal this title!")
+
+        await interaction.response.send_message(embed=embed)
+
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.author.bot or not message.guild:
+            return
+
+        if random.randint(1, 50) == 1:
+            responses = [
+                "🤨",
+                "Are you sure you wanted to post that?",
+                "Cringe meter: ██████████ 100%",
+                "I'm telling the Staff about this one.",
+                "That's going in my cringe compilation.",
+                "Log off for 5 minutes. Please.",
+                "I've seen some things in this server, but this...",
+                "And you decided to press send, really?",
+                "I just know the air in your room is heavy after that one.",
+                "Every day we stray further from the light.",
+                "I’m an AI and even I felt second-hand embarrassment.",
+                "This message right here, officer.",
+                "I'm deleting my own source code so I never have to read that again.",
+                "Did you think this was the one? Because it wasn't.",
+                "💀",
+                "Mods, crush his skull. (Just kidding, but seriously... why?)",
+                "You still have time to delete this. I won't tell anyone.",
+                "Is everything okay at home?",
+                "I’m literally a bot and I’m disappointed in you."
+            ]
+
+            try:
+                await message.reply(random.choice(responses))
+            except discord.Forbidden:
+                print("Error: Bot lacks permission to reply.")
+
         if message.author.bot or not message.guild:
             return
 
@@ -147,27 +198,28 @@ class Fun(commands.Cog):
                 reaction, user = await self.bot.wait_for('reaction_add', timeout=5.0, check=check)
 
                 role = discord.utils.get(message.guild.roles, name="👻|Exorcist")
-                role_status = ""
 
                 if not role:
                     try:
                         role = await message.guild.create_role(name="👻|Exorcist", colour=discord.Colour.purple())
-                        role_status = f" and created the new **{role.name}** role!"
                     except discord.Forbidden:
-                        role_status = "\n⚠️ *Exorcised! (I couldn't create the role. Check my permissions).* "
+                        return await message.channel.send(
+                            "❌ I need 'Manage Roles' permission to create the Exorcist role!")
 
-                if role:
-                    try:
-                        await user.add_roles(role)
-                        if not role_status:
-                            role_status = f" and received {role.mention}"
-                    except discord.Forbidden:
-                        role_status = "\n⚠️ *I caught it, but I can't give you the role! Move my role higher in settings.*"
-                else:
-                    role_status = "\n⚠️ *Exorcised! (But the '👻|Exorcist' role doesn't exist in this server).* "
+                for old_member in role.members:
+                    if old_member.id != user.id:
+                        try:
+                            await old_member.remove_roles(role)
+                        except discord.Forbidden:
+                            pass
 
-                await message.channel.send(f"✨ {user.mention} exorcised the ghost{role_status}")
+                try:
+                    await user.add_roles(role)
+                    status = f"✨ {user.mention} is the new **Exorcist**! The previous hunter has been dethroned."
+                except discord.Forbidden:
+                    status = f"✨ {user.mention} exorcised the ghost, but my role is too low to give the reward!"
 
+                await message.channel.send(status)
                 await ghost_msg.delete()
 
             except asyncio.TimeoutError:
