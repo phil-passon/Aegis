@@ -136,7 +136,7 @@ class Fun(commands.Cog):
         if message.author.bot or not message.guild:
             return
 
-        if random.randint(1, 1) == 1:
+        if random.randint(1, 100) == 1:
             ghost_msg = await message.channel.send("👻 *I'm watching this channel... catch me if you can!*")
             await ghost_msg.add_reaction("💨")
 
