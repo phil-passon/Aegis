@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands, ui
 import asyncio
+import random
 
 from Main import NAME, BOT_INVITE, ICON_URL, EMBED_COLOUR, SOURCE_CODE, STAFF_ROLE_NAME
 
@@ -21,6 +22,38 @@ class TicketView(ui.View):
             await interaction.response.send_message("❌ You do not have permission to close this ticket.",
                                                     ephemeral=True)
 
+    @ui.button(label="Ask the Intern", style=discord.ButtonStyle.primary, emoji="☕", custom_id="sassy_intern_button")
+    async def intern_button(self, interaction: discord.Interaction, button: ui.Button):
+        responses = [
+            "I've analyzed your problem. It seems to be a 'User Error'.",
+            "Have you tried turning your router off and leaving it off? Forever?",
+            "I'd help you, but I'm currently on my 15th coffee break of the hour.",
+            "I'm just an intern. I don't even get paid in Discord Nitro for this.",
+            "That sounds like a 'next year' problem to me.",
+            "Error 404: Intern's motivation not found.",
+            "Have you tried asking nicely? Computers have feelings too, you know.",
+            "I'm currently busy googling how to do my own job. Please hold.",
+            "I'll get right on that... as soon as I finish this 4-hour lunch break.",
+            "My supervisor said I should help you, but they aren't looking right now.",
+            "I've put your issue in the 'Important' folder. (It's actually the trash can).",
+            "Have you tried clicking it harder? Sometimes that works.",
+            "I'm not saying it's your fault, but it's definitely not my fault.",
+            "I'd escalate this, but the stairs are broken and I don't do elevators.",
+            "Is this a 'now' thing or can it wait until I've retired?",
+            "I've consulted the spirits. They said 'ask again when you have snacks'.",
+            "I was going to help, but then I saw a very interesting bird outside.",
+            "Have you considered that maybe the universe just wants you to fail?"
+        ]
+
+        embed = discord.Embed(
+            title="☕ The Intern's Professional™ Advice",
+            description=random.choice(responses),
+            color=discord.Color.blurple()
+        )
+        embed.set_footer(text="Warning: Intern is currently unpaid and unmotivated.")
+
+        await interaction.response.send_message(embed=embed)
+
 
 class Support(commands.Cog):
     def __init__(self, bot):
@@ -38,7 +71,6 @@ class Support(commands.Cog):
         if category is None:
             category = await guild.create_category("Tickets")
 
-        # --- IMPROVED CHECK: Search by User ID in the Topic ---
         for channel in category.text_channels:
             if channel.topic == f"Ticket Owner ID: {user.id}":
                 return await interaction.response.send_message(
