@@ -2,6 +2,7 @@ import discord
 import random
 from discord.ext import commands
 from discord import app_commands
+import datetime
 
 from Main import NAME, BOT_INVITE, ICON_URL, EMBED_COLOUR, SOURCE_CODE, STAFF_ROLE_NAME
 
@@ -38,18 +39,34 @@ class Fun(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(name="rr", description="Play Russian Roulette (chance of a loaded chamber).")
+    @app_commands.command(name="rr", description="High-stakes Russian Roulette. Lose and get sent to the Gulag!")
     async def rr_slash(self, interaction: discord.Interaction):
+        # 1 in 6 chance of "dying"
         is_dead = random.randint(0, 5) == 0
 
         if is_dead:
-            embed = discord.Embed(colour=discord.Colour.red(),
-                                  title="Russian Roulette:",
-                                  description="*Click*. Loaded! You're dead 💀")
+            duration = datetime.timedelta(seconds=60)
+
+            try:
+                await interaction.user.timeout(duration, reason="Lost at Russian Roulette (Gulag)")
+
+                embed = discord.Embed(
+                    colour=discord.Colour.red(),
+                    title="💥 SENT TO THE GULAG!",
+                    description=f"{interaction.user.mention} took a bullet! \n\n**Punishment:** Muted and silenced for 60 seconds."
+                )
+            except discord.Forbidden:
+                embed = discord.Embed(
+                    colour=discord.Colour.orange(),
+                    title="Russian Roulette:",
+                    description="*Click*. Loaded! You should be dead, but your powers (permissions) protected you. Lucky."
+                )
         else:
-            embed = discord.Embed(colour=discord.Color.green(),
-                                  title="Russian Roulette:",
-                                  description="*Click*. Empty! You're good ✅")
+            embed = discord.Embed(
+                colour=discord.Color.green(),
+                title="Russian Roulette:",
+                description="*Click*. Empty! You survived the round. ✅"
+            )
 
         await interaction.response.send_message(embed=embed)
 
