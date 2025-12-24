@@ -36,6 +36,7 @@ Keep your members active with interactive "Fun" commands.
 * **Dynamic Polls:** Create polls with up to 10 options; the bot automatically adds reaction emojis for voting.
 * **Classic Games:** Play Rock-Paper-Scissors, Flip a Coin, or try your luck at Russian Roulette.
 * **Magic 8-Ball:** A randomized response engine for community questions.
+* **Haunted Channels:** A ghost message will appear sometimes and users have the ability to unlock rare role.
 
 ---
 ## 🛠️ Technical Specifications

@@ -3,6 +3,7 @@ import random
 from discord.ext import commands
 from discord import app_commands
 import datetime
+import asyncio
 
 from Main import NAME, BOT_INVITE, ICON_URL, EMBED_COLOUR, SOURCE_CODE, STAFF_ROLE_NAME
 
@@ -129,6 +130,52 @@ class Fun(commands.Cog):
         embed.set_footer(text=f"Requested by {interaction.user.name}", icon_url=interaction.user.display_avatar.url)
 
         await interaction.response.send_message(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.bot or not message.guild:
+            return
+
+        if random.randint(1, 1) == 1:
+            ghost_msg = await message.channel.send("👻 *I'm watching this channel... catch me if you can!*")
+            await ghost_msg.add_reaction("💨")
+
+            def check(reaction, user):
+                return str(reaction.emoji) == "💨" and not user.bot and reaction.message.id == ghost_msg.id
+
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=5.0, check=check)
+
+                role = discord.utils.get(message.guild.roles, name="👻|Exorcist")
+                role_status = ""
+
+                if not role:
+                    try:
+                        role = await message.guild.create_role(name="👻|Exorcist", colour=discord.Colour.purple())
+                        role_status = f" and created the new **{role.name}** role!"
+                    except discord.Forbidden:
+                        role_status = "\n⚠️ *Exorcised! (I couldn't create the role. Check my permissions).* "
+
+                if role:
+                    try:
+                        await user.add_roles(role)
+                        if not role_status:
+                            role_status = f" and received {role.mention}"
+                    except discord.Forbidden:
+                        role_status = "\n⚠️ *I caught it, but I can't give you the role! Move my role higher in settings.*"
+                else:
+                    role_status = "\n⚠️ *Exorcised! (But the '👻|Exorcist' role doesn't exist in this server).* "
+
+                await message.channel.send(f"✨ {user.mention} exorcised the ghost{role_status}")
+
+                await ghost_msg.delete()
+
+            except asyncio.TimeoutError:
+                try:
+                    await ghost_msg.delete()
+                except discord.NotFound:
+                    pass
+
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))
