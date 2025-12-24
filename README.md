@@ -16,6 +16,7 @@ Provide high-quality support with a dedicated ticket environment.
 * **Privacy Focused:** Only the user and the staff team can view the created ticket.
 * **Anti Spam:** Users can only create one ticket at a time.
 * **One-Command Closure:** Use `/close` or press the Close Ticket button to securely delete the ticket channel once the query is resolved.
+* **Intern:** Ask Intern Button for some fun answers while waiting to support.
 ### 🎨 Advanced Embed Creator
 Stop sending plain text. Aegis includes a built-in **Embed Modal** for staff.
 * **Interactive Form:** Input titles, descriptions, and image URLs via a native Discord popup.
@@ -37,6 +38,7 @@ Keep your members active with interactive "Fun" commands.
 * **Classic Games:** Play Rock-Paper-Scissors, Flip a Coin, or try your luck at Russian Roulette.
 * **Magic 8-Ball:** A randomized response engine for community questions.
 * **Haunted Channels:** A ghost message will appear sometimes and users have the ability to unlock rare role.
+* **Bot Responses:** The Bot randomly answers in Sassy and mean ways to random messages.
 
 ---
 ## 🛠️ Technical Specifications
