@@ -33,7 +33,6 @@ class AegisBot(commands.Bot):
 
     async def setup_hook(self):
         print("--- Loading Cogs ---")
-        # This will load Moderation.py, Info.py, and Fun.py
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
                 try:
