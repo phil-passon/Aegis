@@ -32,6 +32,8 @@ class AegisBot(commands.Bot):
         )
 
     async def setup_hook(self):
+        self.tree.on_error = self.on_tree_error
+
         print("--- Loading Cogs ---")
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
@@ -44,6 +46,18 @@ class AegisBot(commands.Bot):
         print("\nSyncing Slash Commands...")
         await self.tree.sync()
 
+    async def on_tree_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
+        if isinstance(error, app_commands.CheckFailure):
+            embed = discord.Embed(
+                title="🛡️ Permission Denied",
+                description=f"You require the `{STAFF_ROLE_NAME}` role to use this command.",
+                colour=discord.Color.red()
+            )
+            if interaction.response.is_done():
+                return await interaction.followup.send(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        print(f"Command Error in {interaction.command.name}: {error}")
 
 # -----------------------------------Events--------------------------------------#
 

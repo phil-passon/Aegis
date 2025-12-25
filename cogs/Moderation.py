@@ -74,16 +74,7 @@ class Moderation(commands.Cog):
     @staticmethod
     def is_staff_perms():
         async def predicate(interaction: discord.Interaction) -> bool:
-            if discord.utils.get(interaction.user.roles, name=STAFF_ROLE_NAME):
-                return True
-            else:
-                error_embed = discord.Embed(
-                    colour=discord.Colour.red(),
-                    title="__**Error**__",
-                    description=f"You don't have the required ``{STAFF_ROLE_NAME}`` role to use this command."
-                )
-                await interaction.response.send_message(embed=error_embed, ephemeral=True)
-                return False
+            return discord.utils.get(interaction.user.roles, name=STAFF_ROLE_NAME) is not None
 
         return app_commands.check(predicate)
 
