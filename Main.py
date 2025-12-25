@@ -36,7 +36,6 @@ class AegisBot(commands.Bot):
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
                 try:
-                    # filename[:-3] removes the .py
                     await self.load_extension(f'cogs.{filename[:-3]}')
                     print(f"✅ Loaded: {filename}")
                 except Exception as e:
@@ -58,7 +57,7 @@ async def on_ready():
 
 
 async def status_task():
-    statuses = [discord.Game("Use /help for commands"), discord.Game("Version 1.1.1")]
+    statuses = [discord.Game("Use /help for commands")]
     while True:
         for status in statuses:
             await bot.change_presence(activity=status)
