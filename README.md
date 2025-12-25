@@ -72,7 +72,8 @@ Aegis uses a persistent component-based system to handle user queries efficientl
 **Prerequisites:**
 * Python installed on your system.
 * A Discord Bot Token from the [Developer Portal](https://discord.com/developers/applications).
-**Installation:** ### 1. Clone the repository:
+**Installation:** 
+### 1. Clone the repository:
 ```bash
     git clone https://github.com/phil-passon/Aegis.git
     cd Aegis
