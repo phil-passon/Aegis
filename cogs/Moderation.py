@@ -6,6 +6,10 @@ from Main import NAME, BOT_INVITE, ICON_URL, EMBED_COLOUR, SOURCE_CODE, STAFF_RO
 
 
 class EmbedModal(ui.Modal, title="Create Custom Embed"):
+    def __init__(self, target_channel: discord.TextChannel):
+        super().__init__()
+        self.target_channel = target_channel
+
     embed_title = ui.TextInput(
         label="Embed Title",
         placeholder="Enter your title here...",
@@ -40,8 +44,6 @@ class EmbedModal(ui.Modal, title="Create Custom Embed"):
     )
 
     async def on_submit(self, interaction: discord.Interaction):
-        from Main import EMBED_COLOUR, BOT_INVITE, ICON_URL
-
         embed = discord.Embed(
             title=self.embed_title.value,
             description=self.message.value,
@@ -59,8 +61,8 @@ class EmbedModal(ui.Modal, title="Create Custom Embed"):
 
         embed.set_footer(text=f"Sent by {interaction.user.name}", icon_url=interaction.user.display_avatar.url)
 
-        await interaction.response.send_message("✅ Embed posted!", ephemeral=True)
-        await interaction.channel.send(embed=embed)
+        await self.target_channel.send(embed=embed)
+        await interaction.response.send_message(f"✅ Embed posted in {self.target_channel.mention}!", ephemeral=True)
 
 
 class Moderation(commands.Cog):
@@ -87,10 +89,11 @@ class Moderation(commands.Cog):
 
     # -----------------------------------Moderation Commands--------------------------------------#
 
-    @app_commands.command(name="embed", description="Opens a form to create a structured embed.")
+    @app_commands.command(name="embed", description="Create a structured embed in a specific channel.")
     @is_staff_perms()
-    async def embed_slash(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(EmbedModal())
+    @app_commands.describe(channel="The channel where the embed should be sent.")
+    async def embed_slash(self, interaction: discord.Interaction, channel: discord.TextChannel):
+        await interaction.response.send_modal(EmbedModal(target_channel=channel))
 
     @app_commands.command(name="kick", description="Kicks a member from the server.")
     @is_staff_perms()
@@ -220,6 +223,41 @@ class Moderation(commands.Cog):
             colour=discord.Color.red()
         )
         await new_channel.send(embed=embed)
+
+    @app_commands.command(name="nick", description="Change a member's nickname.")
+    @is_staff_perms()
+    @app_commands.describe(member="The member to rename.", new_nickname="The new name (leave empty to reset).")
+    async def nick_slash(self, interaction: discord.Interaction, member: discord.Member, new_nickname: str = None):
+        if member.top_role >= interaction.guild.me.top_role:
+            embed = discord.Embed(
+                title="❌ Permission Denied",
+                description=f"I cannot change the nickname of {member.mention} because their role is higher than or equal to mine.",
+                color=discord.Color.red()
+            )
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        try:
+            old_nick = member.display_name
+            await member.edit(nick=new_nickname)
+
+            embed = discord.Embed(
+                title="🏷️ Nickname Updated",
+                colour=EMBED_COLOUR
+            )
+            embed.add_field(name="User", value=member.mention, inline=True)
+            embed.add_field(name="New Nickname", value=f"**{new_nickname if new_nickname else 'Reset to Default'}**",
+                            inline=True)
+            embed.set_footer(text=f"Changed by {interaction.user.name}", icon_url=interaction.user.display_avatar.url)
+
+            await interaction.response.send_message(embed=embed)
+
+        except discord.Forbidden:
+            embed = discord.Embed(
+                title="❌ Error",
+                description="I don't have the `Manage Nicknames` permission or the user's role is too high.",
+                color=discord.Color.red()
+            )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot):

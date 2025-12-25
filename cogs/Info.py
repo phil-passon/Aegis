@@ -21,34 +21,49 @@ class Info(commands.Cog):
 
     @app_commands.command(name="help", description="Shows a list of all bot commands.")
     async def help_slash(self, interaction: discord.Interaction):
-        embed = discord.Embed(colour=EMBED_COLOUR,
-                              title="Aegis Bot Commands",
-                              description="A List of all the commands")
-        embed.add_field(name="📑| **Info**",
-                        value="``/help`` | ``/team`` | ``/about`` |  ``/whois`` |  ``/avatar`` | ``/serverinfo``",
-                        inline=False)
-
-        embed.add_field(name="💸| **Moderation** (Requires StaffPerms)",
-                        value="``/embed`` | ``/kick`` | ``/ban`` | ``/unban`` | ``/clear`` | ``/slowmode`` | ``/lockdown`` | ``/unlock`` | ``/nuke``",
-                        inline=False)
-
-        embed.add_field(name="⚡️| **Fun**",
-                        value="``/rps`` | ``/rr`` | ``/flip`` | ``/poll`` | ``/8ball`` | ``/whoisghosthunter``",
-                        inline=False)
-
-        embed.add_field(name="🤫| **Secret**",
-                        value="``Haunted Messages`` | ``Judgy Reactions``",
-                        inline=False)
-
+        embed = discord.Embed(
+            colour=EMBED_COLOUR,
+            title="🛡️ Aegis Bot Commands",
+            description="A comprehensive list of all available commands and features."
+        )
+        embed.add_field(
+            name="📑| **Info**",
+            value="`/help` • `/team` • `/about` • `/whois` • `/avatar` • `/serverinfo`",
+            inline=False
+        )
+        embed.add_field(
+            name="🛠️| **Moderation & Utility** (Staff Only)",
+            value="`/embed` • `/nick` • `/kick` • `/ban` • `/unban` • `/clear` • `/slowmode` • `/lockdown` • `/unlock` • `/nuke`",
+            inline=False
+        )
+        embed.add_field(
+            name="🎫| **Support**",
+            value="`/ticket` • `/close`",
+            inline=False
+        )
+        embed.add_field(
+            name="⚡| **Fun**",
+            value="`/rps` • `/rr` • `/flip` • `/poll` • `/8ball` • `/exorcist`",
+            inline=False
+        )
+        embed.add_field(
+            name="🤝| **Social**",
+            value="`/slap` • `/rate` • `/vibecheck` • `/ship`",
+            inline=False
+        )
+        embed.add_field(
+            name="🤫| **Secret Features**",
+            value="`Haunted Messages` • `Judgy Reactions` • `The Intern` ",
+            inline=False
+        )
         embed.set_author(name=NAME, url=BOT_INVITE, icon_url=ICON_URL)
-        embed.set_footer(text=f"Requested by {interaction.user.name}",
-                         icon_url=interaction.user.display_avatar.url)
-
+        embed.set_footer(
+            text=f"Requested by {interaction.user.name}",
+            icon_url=interaction.user.display_avatar.url
+        )
         view = ui.View()
-        view.add_item(ui.Button(label="❤️ | Invite Aegis", url=BOT_INVITE, style=discord.ButtonStyle.link))
-        view.add_item(ui.Button(label="👨‍💻 | Source Code", url=SOURCE_CODE, style=discord.ButtonStyle.link))
-
-
+        view.add_item(ui.Button(label="Invite Aegis", url=BOT_INVITE, style=discord.ButtonStyle.link))
+        view.add_item(ui.Button(label="Source Code", url=SOURCE_CODE, style=discord.ButtonStyle.link))
         await interaction.response.send_message(embed=embed, view=view)
 
     @app_commands.command(name="serverinfo", description="Shows detailed information about the server.")
