@@ -41,8 +41,8 @@ Keep your members active with interactive "Fun" commands.
 ---
 ## 📸 Usage Examples
 ### Moderation in Action
-> **Command:** `/kick member:@User reason:Breaking rules`\
-> **Outcome:** Aegis verifies the moderator has the `StaffPerms` role and that their hierarchy is higher than the target's before removing the user and logging the reason in a stylized embed.
+* **Command:** `/kick member:@User reason:Breaking rules`\
+* **Outcome:** Aegis verifies the moderator has the `StaffPerms` role and that their hierarchy is higher than the target's before removing the user and logging the reason in a stylized embed.
 ### Ticket Workflow
 Aegis uses a persistent component-based system to handle user queries efficiently:
 1. **Initialization:** A user triggers the `/ticket` command.
