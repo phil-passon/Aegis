@@ -63,6 +63,9 @@ Aegis uses a persistent component-based system to handle user queries efficientl
 * **Library:** [discord.py](https://github.com/Rapptz/discord.py)
 * **Architecture:** Cog-based (Moderation, Info, Fun, Support)
 * **Features:** Slash Commands, Modals, Persistent Views, and Background Tasks.
+* **Centralized Command Tree:** Commands are managed via a global tree with unified error handling.
+* **Middleware checks:** Implements non-reactive predicates for permission validation, offloading UI feedback to the `on_tree_error` handler to prevent interaction collisions.
+* **Modular Loading:** Asynchronous cog loading ensures the bot remains responsive during initialization.
 
 ---
 ## ⚙️ Quick Start
