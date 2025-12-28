@@ -53,8 +53,8 @@ Aegis uses a persistent component-based system to handle user queries efficientl
     * **☕ Ask the Intern:** Provides randomized, "unpaid intern" humor to keep users entertained while waiting for staff.
 5. **Resolution:** Once the issue is resolved, staff can use `/close` or press the Button to finalize the process.
 ### Fun & Social
-* **`/slap member:@User`** -> 👋 *[Moderator] slapped [User] with **a stale baguette**!*
-* **`/poll question:Best Pizza? options_list:Pepperoni, Cheese, Pineapple`** -> Generates a formatted embed with reaction buttons 1️⃣, 2️⃣, and 3️⃣.
+* **`/slap member: @User`** -> 👋 *[Moderator] slapped [User] with **a stale baguette**!*
+* **`/poll question: Best Pizza? options_list:Pepperoni, Cheese, Pineapple`** -> Generates a formatted embed with reaction buttons 1️⃣, 2️⃣, and 3️⃣.
 * **`/vibecheck`** -> *Current Status: **Main Character Energy 👑***
 
 ---
